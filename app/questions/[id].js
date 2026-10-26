@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   collection,
   doc,
@@ -32,6 +33,7 @@ export default function QuestionDetailScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const { user } = useAuth();
+  const insets = useSafeAreaInsets();
   const [question, setQuestion] = useState(null);
   const [replies, setReplies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -127,7 +129,7 @@ export default function QuestionDetailScreen() {
       />
 
       {user ? (
-        <View style={styles.composer}>
+        <View style={[styles.composer, { paddingBottom: 12 + insets.bottom }]}>
           <View style={styles.toggle}>
             {['answer', 'comment'].map((t) => (
               <Pressable
@@ -155,7 +157,10 @@ export default function QuestionDetailScreen() {
           </View>
         </View>
       ) : (
-        <Pressable style={styles.loginBar} onPress={() => router.push('/auth')}>
+        <Pressable
+          style={[styles.loginBar, { paddingBottom: 16 + insets.bottom }]}
+          onPress={() => router.push('/auth')}
+        >
           <Text style={styles.loginText}>Log in to answer or join the discussion</Text>
         </Pressable>
       )}
@@ -176,7 +181,6 @@ const styles = StyleSheet.create({
   composer: {
     backgroundColor: '#fff',
     padding: 12,
-    paddingBottom: 24,
     borderTopWidth: 1,
     borderTopColor: '#e5e7eb',
     gap: 8,
@@ -199,7 +203,7 @@ const styles = StyleSheet.create({
   },
   sendButton: { backgroundColor: '#2563eb', borderRadius: 8, paddingVertical: 10, paddingHorizontal: 16 },
   sendText: { color: '#fff', fontWeight: '600', fontSize: 16 },
-  loginBar: { backgroundColor: '#2563eb', padding: 16, paddingBottom: 28, alignItems: 'center' },
+  loginBar: { backgroundColor: '#2563eb', padding: 16, alignItems: 'center' },
   loginText: { color: '#fff', fontWeight: '600', fontSize: 16 },
   empty: { textAlign: 'center', color: '#6b7280', marginTop: 32 },
 });
